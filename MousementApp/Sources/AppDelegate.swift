@@ -1,6 +1,7 @@
 import Cocoa
 import SwiftUI
 import Combine
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
@@ -40,12 +41,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 1. Toggle Button
         let toggleItem = NSMenuItem(title: "Start Simulation", action: #selector(toggleSimulation), keyEquivalent: "s")
         toggleItem.keyEquivalentModifierMask = [.command, .shift]
-        toggleItem.tag = 999 // Special tag to find it later
+        toggleItem.tag = 999
         menu.addItem(toggleItem)
         
         menu.addItem(NSMenuItem.separator())
         
-        // 2. Interval Header (Disabled)
+        // 2. Interval Header
         let headerItem = NSMenuItem(title: "Interval (Jeda Waktu):", action: nil, keyEquivalent: "")
         headerItem.isEnabled = false
         menu.addItem(headerItem)
@@ -59,7 +60,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // 4. Quit
+        // 4. Run at Startup
+        let startupItem = NSMenuItem(title: "Run at Startup", action: #selector(toggleStartup), keyEquivalent: "")
+        startupItem.tag = 888
+        menu.addItem(startupItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        // 5. Quit
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         
         statusItem.menu = menu
@@ -72,9 +80,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func setInterval(_ sender: NSMenuItem) {
         if let interval = sender.representedObject as? Double {
             Simulator.shared.intervalMinutes = interval
-            Simulator.shared.updateTimerIfActive() // Restart timer with new interval if active
+            Simulator.shared.updateTimerIfActive()
             updateMenuState()
         }
+    }
+    
+    @objc func toggleStartup() {
+        let service = SMAppService.mainApp
+        do {
+            if service.status == .enabled {
+                try service.unregister()
+            } else {
+                try service.register()
+            }
+        } catch {
+            print("Failed to toggle startup service: \(error)")
+        }
+        updateMenuState()
     }
     
     private func updateMenuState() {
@@ -92,13 +114,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 item.state = (itemInterval == currentInterval) ? .on : .off
             }
         }
+        
+        // Update Startup Checkmark
+        if let startupItem = menu.item(withTag: 888) {
+            startupItem.state = (SMAppService.mainApp.status == .enabled) ? .on : .off
+        }
     }
     
     private func updateIcon(active: Bool) {
         guard let button = statusItem.button else { return }
         
         let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .regular)
-        guard let baseImage = NSImage(systemSymbolName: "cursorarrow.motionlines", accessibilityDescription: "Mousement")?.withSymbolConfiguration(config) else { return }
+        // CHANGED: Using "infinity" instead of "cursorarrow.motionlines"
+        guard let baseImage = NSImage(systemSymbolName: "infinity", accessibilityDescription: "Mousement")?.withSymbolConfiguration(config) else { return }
         guard let image = baseImage.copy() as? NSImage else { return }
         
         if active {

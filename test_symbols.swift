@@ -1,6 +1,6 @@
 import AppKit
 
-let names = ["cursorarrow.motionlines", "cursorarrow", "cursorarrow.rays", "magicmouse", "mouse.fill", "arrow.up.and.down.and.arrow.left.and.right"]
+let names = ["infinity", "waveform", "waveform.path.ecg", "timelapse", "activity"]
 for name in names {
     let img = NSImage(systemSymbolName: name, accessibilityDescription: nil)
     print("\(name): \(img != nil)")

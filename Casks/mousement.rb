@@ -1,6 +1,6 @@
 cask "mousement" do
-  version "1.0.0"
-  sha256 "a8502f02d3d0a16ffc19e4cb4bc40c84b81a0f7087ea58d0cc38a4e86168a027"
+  version "1.1.0"
+  sha256 "07101b8f3aa21056993305241b37ce0b4fb7ec0da44b10dfa4251f04111fc50e"
 
   url "https://github.com/zenmz/mousement/releases/download/v#{version}/Mousement.zip"
   name "Mousement"

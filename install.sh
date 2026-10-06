@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-echo "Downloading Mousement v1.0.0..."
-curl -sL "https://github.com/zenmz/mousement/releases/download/v1.0.0/Mousement.zip" -o /tmp/Mousement.zip
+echo "Downloading Mousement v1.1.0..."
+curl -sL "https://github.com/zenmz/mousement/releases/download/v1.1.0/Mousement.zip" -o /tmp/Mousement.zip
 
 echo "Extracting..."
 unzip -q /tmp/Mousement.zip -d /tmp/MousementAppTmp

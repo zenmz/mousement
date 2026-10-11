@@ -9,9 +9,8 @@ cask "mousement" do
 
   app "Mousement.app"
 
-  postflight do
-    system_command "xattr",
-                   args: ["-cr", "#{appdir}/Mousement.app"]
+  postflight_steps do
+    run "xattr", args: ["-cr", "{{appdir}}/Mousement.app"]
   end
 
   uninstall quit: "com.zen.Mousement"
